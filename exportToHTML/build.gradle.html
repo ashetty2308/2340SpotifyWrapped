@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>build.gradle</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #bcbec4;}
+.s2 { color: #6aab73;}
+.s3 { color: #2aacb8;}
+.s4 { color: #cf8e6d;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+build.gradle</font>
+</center></td></tr></table>
+<pre><span class="s0">plugins </span><span class="s1">{</span>
+    <span class="s0">id </span><span class="s2">'com.android.application'</span>
+    <span class="s0">id </span><span class="s2">'com.google.gms.google-services'</span>
+<span class="s1">}</span>
+
+<span class="s0">android </span><span class="s1">{</span>
+    <span class="s0">namespace </span><span class="s2">'com.example.spotify_sdk'</span>
+    <span class="s0">compileSdk </span><span class="s3">34</span>
+
+    <span class="s0">defaultConfig </span><span class="s1">{</span>
+        <span class="s0">applicationId </span><span class="s2">&quot;com.example.spotify_sdk&quot;</span>
+        <span class="s0">minSdk </span><span class="s3">33</span>
+        <span class="s0">targetSdk </span><span class="s3">34</span>
+        <span class="s0">versionCode </span><span class="s3">1</span>
+        <span class="s0">versionName </span><span class="s2">&quot;1.0&quot;</span>
+        <span class="s0">manifestPlaceholders </span><span class="s1">= [</span><span class="s0">redirectSchemeName: </span><span class="s2">&quot;spotify-sdk&quot;</span><span class="s0">, redirectHostName: </span><span class="s2">&quot;auth&quot;</span><span class="s1">]</span>
+        <span class="s0">testInstrumentationRunner </span><span class="s2">&quot;androidx.test.runner.AndroidJUnitRunner&quot;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">buildTypes </span><span class="s1">{</span>
+        <span class="s0">release </span><span class="s1">{</span>
+            <span class="s0">minifyEnabled </span><span class="s4">false</span>
+            <span class="s0">proguardFiles getDefaultProguardFile</span><span class="s1">(</span><span class="s2">'proguard-android-optimize.txt'</span><span class="s1">)</span><span class="s0">, </span><span class="s2">'proguard-rules.pro'</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s0">compileOptions </span><span class="s1">{</span>
+        <span class="s0">sourceCompatibility JavaVersion.VERSION_1_8</span>
+        <span class="s0">targetCompatibility JavaVersion.VERSION_1_8</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s0">dependencies </span><span class="s1">{</span>
+
+    <span class="s0">implementation </span><span class="s2">'androidx.appcompat:appcompat:1.6.1'</span>
+    <span class="s0">implementation </span><span class="s2">'com.google.android.material:material:1.11.0'</span>
+    <span class="s0">implementation </span><span class="s2">'androidx.constraintlayout:constraintlayout:2.1.4'</span>
+    <span class="s0">implementation </span><span class="s2">'com.spotify.android:auth:2.1.1'</span>
+    <span class="s0">implementation </span><span class="s2">'com.squareup.okhttp3:okhttp:4.9.3'</span>
+    <span class="s0">implementation </span><span class="s2">'androidx.activity:activity:1.8.0'</span>
+    <span class="s0">implementation </span><span class="s2">'com.google.firebase:firebase-auth:22.3.1'</span>
+    <span class="s0">testImplementation </span><span class="s2">'junit:junit:4.13.2'</span>
+    <span class="s0">androidTestImplementation </span><span class="s2">'androidx.test.ext:junit:1.1.5'</span>
+    <span class="s0">androidTestImplementation </span><span class="s2">'androidx.test.espresso:espresso-core:3.5.1'</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

@@ -1,14 +1,24 @@
 package com.example.spotify_sdk;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.spotify_sdk.databinding.ActivityMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -26,6 +36,12 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//    }
+
+
     public static final String CLIENT_ID = "22f277e087fe4179abac40eae012e48a";
     public static final String REDIRECT_URI = "spotify-sdk://auth";
 
@@ -38,10 +54,15 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tokenTextView, codeTextView, profileTextView;
 
+    ActivityMainBinding binding;
+
+
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         // Initialize the views
         tokenTextView = (TextView) findViewById(R.id.token_text_view);
@@ -65,9 +86,46 @@ public class MainActivity extends AppCompatActivity {
 
         profileBtn.setOnClickListener((v) -> {
             onGetUserProfileClicked();
+
+        });
+        binding.bottomNavigationView.setOnItemSelectedListener(item ->{
+
+            switch(item.getItemId()) {
+
+                case R.id.Home:
+                    replaceFragment(new FragmentOne());
+                    break;
+                case R.id.Profile:
+                    replaceFragment(new FragmentTwo());
+                    break;
+                case R.id.Settings:
+                    replaceFragment(new FragmentThree());
+                    break;
+
+
+            }
+
+            return true;
         });
 
+
+
+
+
     }
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
+
+
+    }
+
+
+
+
+
 
     /**
      * Get token from Spotify
