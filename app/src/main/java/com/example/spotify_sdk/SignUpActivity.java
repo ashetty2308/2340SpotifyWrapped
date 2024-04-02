@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,8 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView loginRedirect;
     private FirebaseFirestore store;
     private String userID;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final SecureRandom random = new SecureRandom();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +79,11 @@ public class SignUpActivity extends AppCompatActivity {
                                 userID = auth.getCurrentUser().getUid();
                                 DocumentReference documentRef = store.collection("users").document(userID);
 
+                                String randomString = generateRandomString(16);
+
                                 Map<String, Object> userInfo = new HashMap<>();
                                 userInfo.put("userID", userID);
+                                userInfo.put("username", randomString);
                                 userInfo.put("email", user);
                                 userInfo.put("password", pass);
                                 userInfo.put("authToken", "");
@@ -113,4 +119,14 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+    private static String generateRandomString(int length) {
+        StringBuilder stringBuilder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            stringBuilder.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+        return stringBuilder.toString();
+    }
+
+
 }
