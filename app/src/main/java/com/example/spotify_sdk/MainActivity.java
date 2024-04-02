@@ -77,61 +77,56 @@ public class MainActivity extends AppCompatActivity {
         Button profileBtn = (Button) findViewById(R.id.profile_btn);
         Button wrappedButton = (Button) findViewById(R.id.wrappedButton);
 
-
         // Set the click listeners for the buttons
-
         tokenBtn.setOnClickListener((v) -> {
             getToken();
         });
-
         codeBtn.setOnClickListener((v) -> {
             getCode();
         });
-
         profileBtn.setOnClickListener((v) -> {
             onGetUserProfileClicked();
-
         });
-        binding.bottomNavigationView.setOnItemSelectedListener(item ->{
 
-            switch(item.getItemId()) {
+        String fragmentName = getIntent().getStringExtra("fragment");
+        if (fragmentName != null && fragmentName.equals("FragmentOne")) {
+            replaceFragment(new FragmentOne());
+        }
 
-                case R.id.Home:
-                    replaceFragment(new FragmentOne());
-                    break;
-                case R.id.Profile:
-                    replaceFragment(new FragmentTwo());
-                    break;
-                case R.id.Settings:
-                    replaceFragment(new FragmentThree());
-                    break;
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.Home:
+                        replaceFragment(new FragmentOne());
+                        return true;
 
+                    case R.id.Profile:
+                        replaceFragment(new FragmentTwo());
+                        return true;
 
+                    case R.id.Settings:
+                        replaceFragment(new FragmentThree());
+                        return true;
+                }
+                return false;
             }
-
-            return true;
         });
+
         wrappedButton.setOnClickListener((v) -> {
             generateSpotifyWrapped();
         });
 
-
-
-
-
-
     }
+
+
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
-
-
     }
-
-
-
 
 
 
@@ -189,12 +184,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+//        mAccessToken = "BQBLGOht6lOd12MHWqK9e4oLa7M71uLQTPV55D8Vl1AwTQEe30VK1PiHD5cyxvyNaUIZ6pLwC00XLT4WvKw8VzMIuYd6hwPJN4Y1dlPoa6-vRWv3oHYJ9zM23zflTo9R9VUppTHmS_-5yTzaXRz0lMOZkQzTb_stTJ17AdEX66Ib0j4EYSRlGNBl6YB9ITkMDC4FOOs9bYxLL-pP0w-wmBy4dPcjd2bDIg";
         // Create a request to get the user profile
         final Request request = new Request.Builder()
                 .url("https://api.spotify.com/v1/me")
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
+        Log.d("token", mAccessToken.toString());
+        Log.d("url", request.toString());
         cancelCall();
         mCall = mOkHttpClient.newCall(request);
 
@@ -210,11 +208,13 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
+                    Log.d("response", response.toString());
+                    Log.d("json", response.body().toString());
                     setTextAsync(jsonObject.toString(3), profileTextView);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
+//                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -324,8 +324,7 @@ public class MainActivity extends AppCompatActivity {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[] { "user-read-private", "user-top-read"} ) // <--- Change the scope of your requested token here
-                .setCampaign("your-campaign-token")
+                .setScopes(new String[] {"user-read-private", "user-read-email", "user-read-playback-state", "user-modify-playback-state", "user-read-recently-played", "user-top-read"} ) // <--- Change the scope of your requested token here                .setCampaign("your-campaign-token")
                 .build();
     }
 
@@ -349,4 +348,8 @@ public class MainActivity extends AppCompatActivity {
         cancelCall();
         super.onDestroy();
     }
+
+
+
+
 }
