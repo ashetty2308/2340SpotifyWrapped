@@ -6,12 +6,34 @@
     android:padding="8dp">
 
 
+    <TextView
+        android:id="@+id/textViewTitleArtists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="7dp"
+        android:textStyle="bold"
+        android:textSize="21dp"
+        android:text="Artists" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:adjustViewBounds="true"
-        android:orientation="horizontal"
         android:id="@+id/recyclerviewArtists"
         android:layout_width="match_parent"
-        android:layout_height="350dp" />
+        android:layout_height="246dp"
+        android:adjustViewBounds="true"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/textViewTitleSongs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="7dp"
+        android:textStyle="bold"
+        android:textSize="21dp"
+        android:text="Songs" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerviewSongs"
