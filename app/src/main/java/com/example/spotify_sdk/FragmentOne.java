@@ -21,6 +21,7 @@ public class FragmentOne extends Fragment {
     private ArrayList<String> mArtistImages = new ArrayList<>();
     private ArrayList<String> mSongNames = new ArrayList<>();
     private ArrayList<String> mSongImages = new ArrayList<>();;
+    private ArrayList<String> mSongArtists = new ArrayList<>();;
 
     LinearLayoutManager layoutManagerArtist, layoutManagerSong;
     RecyclerView recyclerViewArtist, recyclerViewSong;
@@ -60,7 +61,7 @@ public class FragmentOne extends Fragment {
         recyclerViewSong = view.findViewById(R.id.recyclerviewSongs);
         recyclerViewSong.setHasFixedSize(true);
         recyclerViewSong.setLayoutManager(layoutManagerSong);
-        adapterSong = new RecycleViewAdapterSong(this.getContext(), mSongNames, mSongImages);
+        adapterSong = new RecycleViewAdapterSong(this.getContext(), mSongNames, mSongImages, mSongArtists);
         recyclerViewSong.setAdapter(adapterSong);
 
 
@@ -90,15 +91,20 @@ public class FragmentOne extends Fragment {
         // ------------
 
         mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-        mSongNames.add("Queen Elizabeth");
+        mSongNames.add("Queen Elizabeth asdasdasd asd asdasd");
+        mSongArtists.add("Englang");
+        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
+        mSongNames.add("Queen Elizabethaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        mSongArtists.add("Englang");
         mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
         mSongNames.add("Queen Elizabeth");
+        mSongArtists.add("Englang");
         mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
         mSongNames.add("Queen Elizabeth");
+        mSongArtists.add("Englang");
         mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
         mSongNames.add("Queen Elizabeth");
-        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-        mSongNames.add("Queen Elizabeth");
+        mSongArtists.add("Englang");
     }
 
 
