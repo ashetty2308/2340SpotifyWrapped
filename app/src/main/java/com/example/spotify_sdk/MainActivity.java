@@ -10,15 +10,24 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.spotify_sdk.databinding.ActivityMainBinding;
+import com.google.ai.client.generativeai.GenerativeModel;
+import com.google.ai.client.generativeai.java.GenerativeModelFutures;
+import com.google.ai.client.generativeai.type.Content;
+import com.google.ai.client.generativeai.type.GenerateContentResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -28,6 +37,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -53,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
     private String mAccessToken, mAccessCode;
     private Call mCall, mCall2;
 
-    private TextView tokenTextView, codeTextView, profileTextView, wrappedTextView;
+    private TextView tokenTextView, codeTextView, profileTextView, wrappedTextView, llmTextView;
 
     ActivityMainBinding binding;
+
+    public static final String geminiAPIKey = "AIzaSyAmCsPrXK6q5bm81_T86daRBVU7w6R5jws";
 
 
     @SuppressLint("NonConstantResourceId")
@@ -69,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         tokenTextView = (TextView) findViewById(R.id.token_text_view);
         codeTextView = (TextView) findViewById(R.id.code_text_view);
         profileTextView = (TextView) findViewById(R.id.response_text_view);
-//        wrappedTextView = (TextView) findViewById(R.id.wrapped_text_view);
+        llmTextView = (TextView) findViewById(R.id.llmTextView);
 
         // Initialize the buttons
         Button tokenBtn = (Button) findViewById(R.id.token_btn);
@@ -90,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
 
         profileBtn.setOnClickListener((v) -> {
             onGetUserProfileClicked();
-
         });
+
         binding.bottomNavigationView.setOnItemSelectedListener(item ->{
 
             switch(item.getItemId()) {
@@ -105,19 +119,12 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.Settings:
                     replaceFragment(new FragmentThree());
                     break;
-
-
             }
-
             return true;
         });
         wrappedButton.setOnClickListener((v) -> {
             generateSpotifyWrapped();
         });
-
-
-
-
 
 
     }
@@ -126,14 +133,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
-
-
     }
-
-
-
-
-
 
     /**
      * Get token from Spotify
@@ -190,11 +190,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Create a request to get the user profile
+//        mAccessToken = " BQABph0jGCmdXRJnG20laooDHxGZvCImMBwaVq-Cm8sop-Xr0ykjjZzetgDCJdNlg8pG-uHdM89aJ4SoZWSwX-fvd1NKOTeig0eOS_uy64q5R0rnRxytpBuc7dQv3OZB9C3nNQUpvjXfimmtiD6SJoyqNFENP4aUFRqEiHxQBATXZ-QIJOyQIk3mbDu5o36MuKTHnApeT1ZhMAuVmG0qi7mhjDUgJ80EnA";
         final Request request = new Request.Builder()
                 .url("https://api.spotify.com/v1/me")
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
+//        Log.d("token", mAccessToken.toString());
+//        Log.d("url", request.toString());
         cancelCall();
         mCall = mOkHttpClient.newCall(request);
 
@@ -210,6 +213,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
+                    Log.d("response", response.toString());
+                    Log.d("json", response.body().toString());
                     setTextAsync(jsonObject.toString(3), profileTextView);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
@@ -221,6 +226,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void generateSpotifyWrapped() {
+
+        ArrayList<String> myMusicTaste = new ArrayList<>();
         if (mAccessToken == null) {
             Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
             return;
@@ -237,6 +244,12 @@ public class MainActivity extends AppCompatActivity {
 
         cancelCall();
 
+
+        GenerativeModel gm = new GenerativeModel("gemini-pro", geminiAPIKey);
+        GenerativeModelFutures model = GenerativeModelFutures.from(gm);
+
+
+
         mCall = mOkHttpClient.newCall(requestForTopArtists);
         mCall.enqueue(new Callback() {
             @Override
@@ -252,16 +265,38 @@ public class MainActivity extends AppCompatActivity {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
                     String[] topFiveArtists = new String[5];
+                    JSONArray genres;
                     // get top 5 artists
                     for (int i = 0; i < 5; i++) {
                         JSONObject artistObjectData = jsonArray.getJSONObject(i);
                         topFiveArtists[i] = artistObjectData.getString("name");
-                        JSONArray genres = artistObjectData.getJSONArray("genres");
-                        Log.d("genres", (String) genres.get(0));
+                        genres = artistObjectData.getJSONArray("genres");
+                        myMusicTaste.add(topFiveArtists[i]);
+                        myMusicTaste.add(String.valueOf(genres));
                     }
-                    for (int i = 0; i < topFiveArtists.length; i++) {
-                        Log.d("genre:", topFiveArtists[i]);
-                    }
+                    Log.d("my music taste", String.valueOf(myMusicTaste));
+
+                    Content content = new Content.Builder()
+                            .addText("Dynamically describe how I act, think, and dress based on my music taste: "+myMusicTaste)
+                            .build();
+
+                    ListenableFuture<GenerateContentResponse> res2 = model.generateContent(content);
+                    Futures.addCallback(res2, new FutureCallback<GenerateContentResponse>() {
+                        @Override
+                        public void onSuccess(GenerateContentResponse result) {
+                            String resultText = result.getText();
+                            llmTextView.setMovementMethod(new ScrollingMovementMethod());
+                            llmTextView.setText(resultText);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            t.printStackTrace();
+                        }
+                    }, getMainExecutor());
+
+
+
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
                     Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
@@ -270,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //to dynamically describe how someone who
+        //listens to my kind of music tends to act/think/dre
 
         mCall2 = mOkHttpClient.newCall(requestForTopTracks);
         mCall2.enqueue(new Callback() {
@@ -289,11 +326,13 @@ public class MainActivity extends AppCompatActivity {
                     // get top 5 artists
                     for (int i = 0; i < 5; i++) {
                         JSONObject artistObjectData = jsonArray.getJSONObject(i);
+                        Log.d("json", artistObjectData.toString());
                         topFiveTracks[i] = artistObjectData.getString("name");
                     }
                     for (int i = 0; i < topFiveTracks.length; i++) {
-                        Log.d("artist:", topFiveTracks[i]);
+                        Log.d("song", topFiveTracks[i].toString());
                     }
+
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
                     Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
@@ -301,6 +340,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        Content content = new Content.Builder();
+////                                .addText(".")
+////                                .build();
 
     }
 
@@ -324,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(false)
-                .setScopes(new String[] { "user-read-private", "user-top-read"} ) // <--- Change the scope of your requested token here
+                .setScopes(new String[] {"user-read-private", "user-read-email", "user-read-playback-state", "user-modify-playback-state", "user-read-recently-played", "user-top-read"} ) // <--- Change the scope of your requested token here
                 .setCampaign("your-campaign-token")
                 .build();
     }
