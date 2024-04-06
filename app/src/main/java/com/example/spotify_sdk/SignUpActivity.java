@@ -22,6 +22,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -77,6 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(SignUpActivity.this, "SignUp Successful!", Toast.LENGTH_SHORT).show();
 
+                                FirebaseUser currentUser = auth.getCurrentUser();
                                 userId = auth.getCurrentUser().getUid();
                                 DocumentReference documentReference = store.collection("users").document(userId);
 
@@ -84,11 +87,20 @@ public class SignUpActivity extends AppCompatActivity {
 
                                 Map<String, Object> userInfo = new HashMap<>();
                                 userInfo.put("userID", userId);
-                                userInfo.put("username", randomString);
                                 userInfo.put("email", user);
                                 userInfo.put("password", pass);
                                 userInfo.put("authToken", "");
                                 userInfo.put("refreshToken", "");
+
+                                currentUser.updateProfile(new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(randomString)
+                                                .build())
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                               finish();
+                                            }
+                                        });
 
                                 documentReference.set(userInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
