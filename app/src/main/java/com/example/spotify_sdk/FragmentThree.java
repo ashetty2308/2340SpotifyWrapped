@@ -4,9 +4,12 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,6 +56,18 @@ public class FragmentThree extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        String apiKey = getArguments().getString("TOKEN");
+        Log.d("keyvalue", apiKey);
+        String[] songSeeds = getArguments().getStringArray("SONG_SEEDS");
+        for (int i = 0; i < songSeeds.length; i++) {
+            Log.d("song "+i+":", songSeeds[i]);
+        }
+        String[] artistSeeds = getArguments().getStringArray("ARTIST_SEEDS");
+        for (int i = 0; i < artistSeeds.length; i++) {
+            Log.d("artist "+i+":", artistSeeds[i]);
+        }
+
+
     }
 
     @Override

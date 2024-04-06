@@ -1,16 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    tools:context=".FragmentOne">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/textViewTitleArtists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="7dp"
+        android:textStyle="bold"
+        android:textSize="21dp"
+        android:text="Artists" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewArtists"
+        android:layout_width="match_parent"
+        android:layout_height="246dp"
+        android:adjustViewBounds="true"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/textViewTitleSongs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="7dp"
+        android:textStyle="bold"
+        android:textSize="21dp"
+        android:text="Songs" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewSongs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:orientation="horizontal" />
 
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+</LinearLayout>

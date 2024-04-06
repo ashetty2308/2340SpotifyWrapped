@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
 
     public static final String geminiAPIKey = "AIzaSyAmCsPrXK6q5bm81_T86daRBVU7w6R5jws";
-
+    public Bundle dataBundle, apiKeyStorage, topFiveSongsSeeds, topFiveArtistsSeeds;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -91,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
         Button profileBtn = (Button) findViewById(R.id.profile_btn);
         Button wrappedButton = (Button) findViewById(R.id.wrappedButton);
 
+        apiKeyStorage = new Bundle();
+        topFiveSongsSeeds = new Bundle();
+        topFiveArtistsSeeds = new Bundle();
+        dataBundle = new Bundle();
 
         // Set the click listeners for the buttons
 
@@ -106,26 +110,32 @@ public class MainActivity extends AppCompatActivity {
             onGetUserProfileClicked();
         });
 
-        binding.bottomNavigationView.setOnItemSelectedListener(item ->{
-
-            switch(item.getItemId()) {
-
-                case R.id.Home:
-                    replaceFragment(new FragmentOne());
-                    break;
-                case R.id.Profile:
-                    replaceFragment(new FragmentTwo());
-                    break;
-                case R.id.Settings:
-                    replaceFragment(new FragmentThree());
-                    break;
-            }
-            return true;
-        });
         wrappedButton.setOnClickListener((v) -> {
             generateSpotifyWrapped();
         });
-
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.Home:
+                        FragmentOne frag1 = new FragmentOne();
+                        frag1.setArguments(dataBundle);
+                        replaceFragment(frag1);
+                        return true;
+                    case R.id.Profile:
+                        replaceFragment(new FragmentTwo());
+                        return true;
+                    case R.id.Settings:
+                        FragmentThree frag3 = new FragmentThree();
+                        Log.d("DataBundle", dataBundle.toString());
+                        frag3.setArguments(dataBundle);
+                        replaceFragment(frag3);
+                        return true;
+                }
+                return false;
+            }
+        });
 
     }
     private void replaceFragment(Fragment fragment){
@@ -144,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
     public void getToken() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
         AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_TOKEN_REQUEST_CODE, request);
+
     }
 
     /**
@@ -172,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
             mAccessToken = response.getAccessToken();
             Log.d("Token", mAccessToken);
             setTextAsync(mAccessToken, tokenTextView);
+            dataBundle.putString("TOKEN", mAccessToken);
 
         } else if (AUTH_CODE_REQUEST_CODE == requestCode) {
             mAccessCode = response.getCode();
@@ -233,12 +245,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final Request requestForTopArtists = new Request.Builder()
-                .url("https://api.spotify.com/v1/me/top/artists")
+                .url("https://api.spotify.com/v1/me/top/artists?time_range=long_term")
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
+        Log.d("URL", String.valueOf(requestForTopArtists));
+
         final Request requestForTopTracks = new Request.Builder()
-                .url("https://api.spotify.com/v1/me/top/tracks")
+                .url("https://api.spotify.com/v1/me/top/tracks?time_range=long_term")
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
@@ -265,18 +279,24 @@ public class MainActivity extends AppCompatActivity {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
                     String[] topFiveArtists = new String[5];
+                    String[] topFiveArtistsSeedsArray = new String[5];
+                    String[] topFiveArtistImages = new String[5];
                     JSONArray genres;
                     // get top 5 artists
                     for (int i = 0; i < 5; i++) {
                         JSONObject artistObjectData = jsonArray.getJSONObject(i);
                         topFiveArtists[i] = artistObjectData.getString("name");
+                        topFiveArtistsSeedsArray[i] = artistObjectData.getString("id");
                         genres = artistObjectData.getJSONArray("genres");
+                        topFiveArtistImages[i] = artistObjectData.getJSONArray("images").getJSONObject(0).getString("url");
                         myMusicTaste.add(topFiveArtists[i]);
                         myMusicTaste.add(String.valueOf(genres));
                     }
-                    Log.d("my music taste", String.valueOf(myMusicTaste));
-
+                    dataBundle.putStringArray("ARTIST_SEEDS", topFiveArtistsSeedsArray);
+                    dataBundle.putStringArray("ARTIST_IMAGES", topFiveArtistImages);
+                    dataBundle.putStringArray("ARTIST_NAMES", topFiveArtists);
                     Content content = new Content.Builder()
+                            // look to possibly limit the response size (characters/words/sentences, etc.)
                             .addText("Dynamically describe how I act, think, and dress based on my music taste: "+myMusicTaste)
                             .build();
 
@@ -323,16 +343,21 @@ public class MainActivity extends AppCompatActivity {
                     final JSONObject jsonObject = new JSONObject(response.body().string());
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
                     String[] topFiveTracks = new String[5];
+                    String[] topFiveTrackSeeds = new String[5];
+                    String[] topFiveSongImages = new String[5];
+                    String[] topFiveSongsWho = new String[5];
                     // get top 5 artists
                     for (int i = 0; i < 5; i++) {
                         JSONObject artistObjectData = jsonArray.getJSONObject(i);
-                        Log.d("json", artistObjectData.toString());
                         topFiveTracks[i] = artistObjectData.getString("name");
+                        topFiveTrackSeeds[i] = artistObjectData.getString("id");
+                        topFiveSongImages[i] = artistObjectData.getJSONObject("album").getJSONArray("images").getJSONObject(0).getString("url");
+                        topFiveSongsWho[i] = artistObjectData.getJSONArray("artists").getJSONObject(0).getString("name");
                     }
-                    for (int i = 0; i < topFiveTracks.length; i++) {
-                        Log.d("song", topFiveTracks[i].toString());
-                    }
-
+                    dataBundle.putStringArray("SONG", topFiveTracks);
+                    dataBundle.putStringArray("SONG_SEEDS", topFiveTrackSeeds);
+                    dataBundle.putStringArray("SONG_WHO", topFiveSongsWho);
+                    dataBundle.putStringArray("SONG_IMAGES", topFiveSongImages);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
                     Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
