@@ -38,7 +38,7 @@
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="154dp"
                 android:ellipsize="end"
-                android:maxLines="3" />
+                android:maxLines="2" />
 
             <TextView
                 android:id="@+id/textViewSongArtist"
@@ -54,7 +54,7 @@
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="154dp"
                 android:ellipsize="end"
-                android:maxLines="3"/>
+                android:maxLines="2"/>
 
 
         </RelativeLayout>
