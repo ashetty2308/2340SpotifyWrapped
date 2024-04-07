@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
 
+    private boolean navSetup = false;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -87,11 +88,17 @@ public class MainActivity extends AppCompatActivity {
         profileBtn.setOnClickListener((v) -> {
             onGetUserProfileClicked();
         });
+        wrappedButton.setOnClickListener((v) -> {
+            generateSpotifyWrapped();
+        });
 
-        String fragmentName = getIntent().getStringExtra("fragment");
-        if (fragmentName != null && fragmentName.equals("FragmentOne")) {
-            replaceFragment(new FragmentOne());
-        }
+
+        // this doesn't do anything?
+//        String fragmentName = getIntent().getStringExtra("fragment");
+//        if (fragmentName != null && fragmentName.equals("FragmentOne")) {
+//            replaceFragment(new FragmentOne());
+//        }
+//
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -114,12 +121,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        wrappedButton.setOnClickListener((v) -> {
-            generateSpotifyWrapped();
-        });
+
 
     }
-
 
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -127,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
-
 
 
     /**
