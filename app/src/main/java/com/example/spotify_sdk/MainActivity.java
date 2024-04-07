@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         Button codeBtn = (Button) findViewById(R.id.code_btn);
         Button profileBtn = (Button) findViewById(R.id.profile_btn);
         Button wrappedButton = (Button) findViewById(R.id.wrappedButton);
+        Button enterButton = (Button) findViewById(R.id.enterButton);
 
         // Set the click listeners for the buttons
         tokenBtn.setOnClickListener((v) -> {
@@ -91,45 +92,10 @@ public class MainActivity extends AppCompatActivity {
         wrappedButton.setOnClickListener((v) -> {
             generateSpotifyWrapped();
         });
-
-
-        // this doesn't do anything?
-//        String fragmentName = getIntent().getStringExtra("fragment");
-//        if (fragmentName != null && fragmentName.equals("FragmentOne")) {
-//            replaceFragment(new FragmentOne());
-//        }
-//
-
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.Home:
-                        replaceFragment(new FragmentOne());
-                        return true;
-
-                    case R.id.Profile:
-                        replaceFragment(new FragmentTwo());
-                        return true;
-
-                    case R.id.Settings:
-                        replaceFragment(new FragmentThree());
-                        return true;
-                }
-                return false;
-            }
+        enterButton.setOnClickListener((v) -> {
+            startActivity(new Intent(MainActivity.this, NavActivity.class));
         });
 
-
-
-    }
-
-    private void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
     }
 
 
