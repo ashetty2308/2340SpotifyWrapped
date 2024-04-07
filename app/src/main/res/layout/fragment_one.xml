@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-
     <TextView
         android:id="@+id/textViewTitleArtists"
         android:layout_width="match_parent"
@@ -15,12 +14,12 @@
         android:layout_marginLeft="7dp"
         android:textStyle="bold"
         android:textSize="21dp"
-        android:text="Artists" />
+        android:text="Top Artists" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerviewArtists"
         android:layout_width="match_parent"
-        android:layout_height="246dp"
+        android:layout_height="214dp"
         android:adjustViewBounds="true"
         android:orientation="horizontal" />
 
@@ -33,7 +32,7 @@
         android:layout_marginLeft="7dp"
         android:textStyle="bold"
         android:textSize="21dp"
-        android:text="Songs" />
+        android:text="Top Tracks" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerviewSongs"

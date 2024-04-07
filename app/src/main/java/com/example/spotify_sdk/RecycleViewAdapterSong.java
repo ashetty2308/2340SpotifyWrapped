@@ -19,11 +19,13 @@ public class RecycleViewAdapterSong extends RecyclerView.Adapter<RecycleViewAdap
 
     private ArrayList<String> mSongNames = new ArrayList<>();
     private ArrayList<String> mSongImages = new ArrayList<>();
+    private ArrayList<String> mSongArtist = new ArrayList<>();
     private Context mContext;
 
-    public RecycleViewAdapterSong(Context context, ArrayList<String> names, ArrayList<String> images) {
+    public RecycleViewAdapterSong(Context context, ArrayList<String> names, ArrayList<String> images, ArrayList<String> artists) {
         mSongNames = names;
         mSongImages = images;
+        mSongArtist = artists;
         mContext = context;
     }
 
@@ -37,6 +39,7 @@ public class RecycleViewAdapterSong extends RecyclerView.Adapter<RecycleViewAdap
     @Override
     public void onBindViewHolder(@NonNull RecycleViewAdapterSong.ViewHolder holder, int position) {
         holder.songName.setText(mSongNames.get(position));
+        holder.songArtist.setText(mSongArtist.get(position));
         Glide.with(mContext).asBitmap()
                 .load(mSongImages.get(position))
                 .into(holder.songImage);
@@ -54,11 +57,13 @@ public class RecycleViewAdapterSong extends RecyclerView.Adapter<RecycleViewAdap
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView songImage;
         TextView songName;
+        TextView songArtist;
 
         public ViewHolder(View itemView) {
             super(itemView);
             songImage = itemView.findViewById(R.id.imageViewSong);
             songName = itemView.findViewById(R.id.textViewSong);
+            songArtist = itemView.findViewById(R.id.textViewSongArtist);
         }
     }
 

@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String geminiAPIKey = "AIzaSyAmCsPrXK6q5bm81_T86daRBVU7w6R5jws";
     public Bundle dataBundle, apiKeyStorage, topFiveSongsSeeds, topFiveArtistsSeeds;
+    private boolean navSetup = false;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         Button codeBtn = (Button) findViewById(R.id.code_btn);
         Button profileBtn = (Button) findViewById(R.id.profile_btn);
         Button wrappedButton = (Button) findViewById(R.id.wrappedButton);
+        Button enterButton = (Button) findViewById(R.id.enterButton);
 
         apiKeyStorage = new Bundle();
         topFiveSongsSeeds = new Bundle();
@@ -113,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
         wrappedButton.setOnClickListener((v) -> {
             generateSpotifyWrapped();
         });
+
+        enterButton.setOnClickListener((v) -> {
+            startActivity(new Intent(MainActivity.this, FragmentOne.class));
+        });
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -144,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
+
+
 
     /**
      * Get token from Spotify

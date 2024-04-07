@@ -22,6 +22,7 @@ public class FragmentOne extends Fragment {
     private ArrayList<String> mArtistImages = new ArrayList<>();
     private ArrayList<String> mSongNames = new ArrayList<>();
     private ArrayList<String> mSongImages = new ArrayList<>();;
+    private ArrayList<String> mSongArtists = new ArrayList<>();;
 
     LinearLayoutManager layoutManagerArtist, layoutManagerSong;
     RecyclerView recyclerViewArtist, recyclerViewSong;
@@ -62,9 +63,8 @@ public class FragmentOne extends Fragment {
         recyclerViewSong = view.findViewById(R.id.recyclerviewSongs);
         recyclerViewSong.setHasFixedSize(true);
         recyclerViewSong.setLayoutManager(layoutManagerSong);
-        adapterSong = new RecycleViewAdapterSong(this.getContext(), mSongNames, mSongImages);
+        adapterSong = new RecycleViewAdapterSong(this.getContext(), mSongNames, mSongImages, mSongArtists);
         recyclerViewSong.setAdapter(adapterSong);
-
 
 //        adapterArtist.notifyDataSetChanged();
 //        adapterSong.notifyDataSetChanged();
@@ -83,36 +83,6 @@ public class FragmentOne extends Fragment {
             mSongImages.add(songImages[i]);
             mSongNames.add(songNames[i]);
         }
-//        mArtistImages.add("https://www.hattori.asia/wordpress/wp-content/uploads/2023/03/20230315-01.jpg");
-//        mArtistNames.add("Chiikawa");
-//
-//        mArtistImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-//        mArtistNames.add("Queen Elizabeth");
-//
-//        mArtistImages.add("https://www.hattori.asia/wordpress/wp-content/uploads/2023/03/20230315-01.jpg");
-//        mArtistNames.add("Chiikawa");
-//
-//        mArtistImages.add("https://www.hattori.asia/wordpress/wp-content/uploads/2023/03/20230315-01.jpg");
-//        mArtistNames.add("Chiikawa");
-//
-//        mArtistImages.add("https://www.hattori.asia/wordpress/wp-content/uploads/2023/03/20230315-01.jpg");
-//        mArtistNames.add("Chiikawa");
-//
-//        mArtistImages.add("https://www.hattori.asia/wordpress/wp-content/uploads/2023/03/20230315-01.jpg");
-//        mArtistNames.add("Chiikawa");
-
-        // ------------
-
-//        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-//        mSongNames.add("Queen Elizabeth");
-//        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-//        mSongNames.add("Queen Elizabeth");
-//        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-//        mSongNames.add("Queen Elizabeth");
-//        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-//        mSongNames.add("Queen Elizabeth");
-//        mSongImages.add("https://upload.wikimedia.org/wikipedia/commons/b/b6/Queen_Elizabeth_II_in_March_2015.jpg");
-//        mSongNames.add("Queen Elizabeth");
     }
 
 

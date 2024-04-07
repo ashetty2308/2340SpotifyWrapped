@@ -13,8 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Spotifysdk"
-        
         tools:targetApi="31" >
+
+        <activity
+            android:name=".NavActivity"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
@@ -27,7 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <data android:host="auth" android:scheme="spotify-sdk"/>
+                <data
+                    android:host="auth"
+                    android:scheme="spotify-sdk" />
             </intent-filter>
         </activity>
         <activity
