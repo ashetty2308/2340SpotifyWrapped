@@ -64,9 +64,8 @@ public class FragmentOne extends Fragment {
         adapterSong = new RecycleViewAdapterSong(this.getContext(), mSongNames, mSongImages, mSongArtists);
         recyclerViewSong.setAdapter(adapterSong);
 
-
-//        adapterArtist.notifyDataSetChanged();
-//        adapterSong.notifyDataSetChanged();
+        adapterArtist.notifyDataSetChanged();
+        adapterSong.notifyDataSetChanged();
     }
 
     public void getTestImages() {
