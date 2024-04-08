@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -154,6 +155,7 @@ public class FragmentTwo extends Fragment {
                                                         });
                                                 Log.d(TAG, "User Password Updated!");
                                             } else {
+                                                Snackbar.make(requireView(), task.getException().getMessage(), Snackbar.LENGTH_LONG).show();
                                                 Log.e(TAG, "Failed to update user password!");
                                             }
                                         }
