@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -27,19 +28,33 @@
         android:id="@+id/textViewTitleSongs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="7dp"
-        android:layout_marginLeft="7dp"
-        android:textStyle="bold"
+        android:text="Top Tracks"
         android:textSize="21dp"
-        android:text="Top Tracks" />
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerviewSongs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:orientation="horizontal" />
+        android:orientation="horizontal">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/aiButton"
+        android:layout_width="358dp"
+        android:layout_height="wrap_content"
+        android:text="AI's View of You!" />
+
+    <TextView
+        android:id="@+id/llmTextView"
+        android:layout_width="360dp"
+        android:layout_height="154dp"
+        android:text="TextView" />
 
 
 </LinearLayout>

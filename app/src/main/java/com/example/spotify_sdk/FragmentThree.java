@@ -1,5 +1,7 @@
 package com.example.spotify_sdk;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -56,18 +58,9 @@ public class FragmentThree extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        String apiKey = getArguments().getString("TOKEN");
-        Log.d("keyvalue", apiKey);
-        String[] songSeeds = getArguments().getStringArray("SONG_SEEDS");
-        for (int i = 0; i < songSeeds.length; i++) {
-            Log.d("song "+i+":", songSeeds[i]);
-        }
-        String[] artistSeeds = getArguments().getStringArray("ARTIST_SEEDS");
-        for (int i = 0; i < artistSeeds.length; i++) {
-            Log.d("artist "+i+":", artistSeeds[i]);
-        }
-
-
+//        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("myPreferences", Context.MODE_PRIVATE);
+//        String music = sharedPreferences.getString("MUSIC", "NULL");
+//        Log.d("MUSIC", music);
     }
 
     @Override

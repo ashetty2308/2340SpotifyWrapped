@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +17,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,9 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -39,6 +46,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 import okhttp3.Call;
@@ -73,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     public Bundle dataBundle, apiKeyStorage, topFiveSongsSeeds, topFiveArtistsSeeds;
     private boolean navSetup = false;
 
+
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         tokenTextView = (TextView) findViewById(R.id.token_text_view);
         codeTextView = (TextView) findViewById(R.id.code_text_view);
         profileTextView = (TextView) findViewById(R.id.response_text_view);
-        llmTextView = (TextView) findViewById(R.id.llmTextView);
-
+//        wrappedTextView = (TextView) findViewById(R.id.wrapped_text_view);
+        dataBundle = new Bundle();
         // Initialize the buttons
         Button tokenBtn = (Button) findViewById(R.id.token_btn);
         Button codeBtn = (Button) findViewById(R.id.code_btn);
@@ -93,10 +103,13 @@ public class MainActivity extends AppCompatActivity {
         Button wrappedButton = (Button) findViewById(R.id.wrappedButton);
         Button enterButton = (Button) findViewById(R.id.enterButton);
 
-        apiKeyStorage = new Bundle();
-        topFiveSongsSeeds = new Bundle();
-        topFiveArtistsSeeds = new Bundle();
-        dataBundle = new Bundle();
+
+
+
+//        apiKeyStorage = new Bundle();
+//        topFiveSongsSeeds = new Bundle();
+//        topFiveArtistsSeeds = new Bundle();
+//        dataBundle = new Bundle();
 
         // Set the click listeners for the buttons
 
@@ -111,47 +124,47 @@ public class MainActivity extends AppCompatActivity {
         profileBtn.setOnClickListener((v) -> {
             onGetUserProfileClicked();
         });
-
         wrappedButton.setOnClickListener((v) -> {
             generateSpotifyWrapped();
         });
-
         enterButton.setOnClickListener((v) -> {
-            startActivity(new Intent(MainActivity.this, FragmentOne.class));
+            Intent intent = new Intent(MainActivity.this, NavActivity.class);
+            intent.putExtra("DATA_BUNDLE", dataBundle);
+            startActivity(intent);
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.Home:
-                        FragmentOne frag1 = new FragmentOne();
-                        frag1.setArguments(dataBundle);
-                        replaceFragment(frag1);
-                        return true;
-                    case R.id.Profile:
-                        replaceFragment(new FragmentTwo());
-                        return true;
-                    case R.id.Settings:
-                        FragmentThree frag3 = new FragmentThree();
-                        Log.d("DataBundle", dataBundle.toString());
-                        frag3.setArguments(dataBundle);
-                        replaceFragment(frag3);
-                        return true;
-                }
-                return false;
-            }
-        });
+
+//        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+//        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+//                switch (menuItem.getItemId()) {
+//                    case R.id.Home:
+//                        FragmentOne frag1 = new FragmentOne();
+//                        frag1.setArguments(dataBundle);
+//                        replaceFragment(frag1);
+//                        return true;
+//                    case R.id.Profile:
+//                        replaceFragment(new FragmentTwo());
+//                        return true;
+//                    case R.id.Settings:
+//                        FragmentThree frag3 = new FragmentThree();
+//                        Log.d("DataBundle", dataBundle.toString());
+//                        frag3.setArguments(dataBundle);
+//                        replaceFragment(frag3);
+//                        return true;
+//                }
+//                return false;
+//            }
+//        });
 
     }
-    private void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
-    }
-
+//    private void replaceFragment(Fragment fragment){
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.frame_layout, fragment);
+//        fragmentTransaction.commit();
+//    }
 
 
     /**
@@ -163,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
     public void getToken() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
         AuthorizationClient.openLoginActivity(MainActivity.this, AUTH_TOKEN_REQUEST_CODE, request);
-
     }
 
     /**
@@ -217,11 +229,10 @@ public class MainActivity extends AppCompatActivity {
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
-//        Log.d("token", mAccessToken.toString());
-//        Log.d("url", request.toString());
         cancelCall();
-        mCall = mOkHttpClient.newCall(request);
 
+
+        mCall = mOkHttpClient.newCall(request);
         mCall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -239,8 +250,8 @@ public class MainActivity extends AppCompatActivity {
                     setTextAsync(jsonObject.toString(3), profileTextView);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
+//                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -249,19 +260,37 @@ public class MainActivity extends AppCompatActivity {
     public void generateSpotifyWrapped() {
 
         ArrayList<String> myMusicTaste = new ArrayList<>();
+        ArrayList<String> myMusicTasteButForDB = new ArrayList<>();
+
         if (mAccessToken == null) {
             Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+//        SharedPreferences mySharedPreferences = getSharedPreferences("myPreferences", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = mySharedPreferences.edit();
+
+
+        RadioButton b1 = findViewById(R.id.b1);
+        RadioButton b2 = findViewById(R.id.b2);
+        RadioButton b3 = findViewById(R.id.b3);
+
+        String timeRange = "";
+        if (b1.isChecked()) {
+            timeRange = "short_term";
+        } else if (b2.isChecked()) {
+            timeRange = "medium_term";
+        } else {
+            timeRange = "long_term";
+        }
+        Log.d("Time range", timeRange);
         final Request requestForTopArtists = new Request.Builder()
-                .url("https://api.spotify.com/v1/me/top/artists?time_range=long_term")
+                .url("https://api.spotify.com/v1/me/top/artists?time_range="+timeRange)
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
-        Log.d("URL", String.valueOf(requestForTopArtists));
-
         final Request requestForTopTracks = new Request.Builder()
-                .url("https://api.spotify.com/v1/me/top/tracks?time_range=long_term")
+                .url("https://api.spotify.com/v1/me/top/tracks?time_range="+timeRange)
                 .addHeader("Authorization", "Bearer " + mAccessToken)
                 .build();
 
@@ -300,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
                         topFiveArtistImages[i] = artistObjectData.getJSONArray("images").getJSONObject(0).getString("url");
                         myMusicTaste.add(topFiveArtists[i]);
                         myMusicTaste.add(String.valueOf(genres));
+                        myMusicTasteButForDB.add(topFiveArtists[i]);
                     }
                     dataBundle.putStringArray("ARTIST_SEEDS", topFiveArtistsSeedsArray);
                     dataBundle.putStringArray("ARTIST_IMAGES", topFiveArtistImages);
@@ -309,13 +339,15 @@ public class MainActivity extends AppCompatActivity {
                             .addText("Dynamically describe how I act, think, and dress based on my music taste: "+myMusicTaste)
                             .build();
 
+
                     ListenableFuture<GenerateContentResponse> res2 = model.generateContent(content);
                     Futures.addCallback(res2, new FutureCallback<GenerateContentResponse>() {
                         @Override
                         public void onSuccess(GenerateContentResponse result) {
                             String resultText = result.getText();
-                            llmTextView.setMovementMethod(new ScrollingMovementMethod());
-                            llmTextView.setText(resultText);
+                            dataBundle.putString("GEMINI_DESCRIPTION", resultText);
+//                            llmTextView.setMovementMethod(new ScrollingMovementMethod());
+//                            llmTextView.setText(resultText);
                         }
 
                         @Override
@@ -337,6 +369,8 @@ public class MainActivity extends AppCompatActivity {
         //to dynamically describe how someone who
         //listens to my kind of music tends to act/think/dre
 
+        Log.d("my music taste", myMusicTasteButForDB.toString());
+
         mCall2 = mOkHttpClient.newCall(requestForTopTracks);
         mCall2.enqueue(new Callback() {
             @Override
@@ -355,6 +389,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] topFiveTrackSeeds = new String[5];
                     String[] topFiveSongImages = new String[5];
                     String[] topFiveSongsWho = new String[5];
+                    String[] topFiveSongsURL = new String[5];
                     // get top 5 artists
                     for (int i = 0; i < 5; i++) {
                         JSONObject artistObjectData = jsonArray.getJSONObject(i);
@@ -362,11 +397,27 @@ public class MainActivity extends AppCompatActivity {
                         topFiveTrackSeeds[i] = artistObjectData.getString("id");
                         topFiveSongImages[i] = artistObjectData.getJSONObject("album").getJSONArray("images").getJSONObject(0).getString("url");
                         topFiveSongsWho[i] = artistObjectData.getJSONArray("artists").getJSONObject(0).getString("name");
+                        topFiveSongsURL[i] = artistObjectData.getString("preview_url");
+                        myMusicTasteButForDB.add(topFiveTracks[i]);
                     }
+
+//                    if (mySharedPreferences.getString("MUSIC", null) != null) {
+//                        // there is music we have to consider to make sure we store
+//
+//                    }
+//                    Gson gson = new Gson();
+//                    String stringDataRep = gson.toJson(myMusicTasteButForDB);
+//                    editor.putString("MUSIC", stringDataRep);
+//                    editor.commit();
+//
+//
+//                    Log.d("shared preferences", mySharedPreferences.getAll().toString());
+//                    dataBundle.putStringArrayList("STORAGE_DATA", myMusicTasteButForDB);
                     dataBundle.putStringArray("SONG", topFiveTracks);
                     dataBundle.putStringArray("SONG_SEEDS", topFiveTrackSeeds);
                     dataBundle.putStringArray("SONG_WHO", topFiveSongsWho);
                     dataBundle.putStringArray("SONG_IMAGES", topFiveSongImages);
+                    dataBundle.putStringArray("SONG_SNIPPETS", topFiveSongsURL);
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
                     Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
@@ -378,6 +429,11 @@ public class MainActivity extends AppCompatActivity {
 //        Content content = new Content.Builder();
 ////                                .addText(".")
 ////                                .build();
+        Gson gson = new Gson();
+        String musicTasteNowString = gson.toJson(myMusicTaste);
+        Log.d("set my music taste", musicTasteNowString);
+//        editor.putString("MUSIC", musicTasteNowString);
+
 
     }
 
