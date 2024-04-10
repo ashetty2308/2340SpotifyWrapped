@@ -4,14 +4,27 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +41,7 @@ public class FragmentThree extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private DatabaseReference firebaseDatabase;
 
     public FragmentThree() {
         // Required empty public constructor
@@ -58,15 +72,40 @@ public class FragmentThree extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-//        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("myPreferences", Context.MODE_PRIVATE);
-//        String music = sharedPreferences.getString("MUSIC", "NULL");
-//        Log.d("MUSIC", music);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_three, container, false);
+
+
+        View view = inflater.inflate(R.layout.fragment_three, container, false);
+        ArrayList<String> listOfEverything = new ArrayList<>();
+        ListView listView = (ListView) view.findViewById(R.id.lv);
+
+        firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("MUSIC");
+        firebaseDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot eachSnapshot : snapshot.getChildren()) {
+                    for (DataSnapshot eachMusic : eachSnapshot.getChildren()) {
+                        String musicDataFinally = eachMusic.getValue(String.class);
+                        listOfEverything.add(musicDataFinally);
+                         if (listOfEverything.size() == 10) {
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, listOfEverything);
+                            listView.setAdapter(adapter);
+                        }
+                    }
+                    Log.d("list of everything", listOfEverything.toString());
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        return view;
     }
 }

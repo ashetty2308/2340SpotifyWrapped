@@ -32,6 +32,11 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
@@ -83,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean navSetup = false;
 
 
+    private DatabaseReference databaseReference;
+
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         Button enterButton = (Button) findViewById(R.id.enterButton);
 
 
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("MUSIC");
 
 
 //        apiKeyStorage = new Bundle();
@@ -418,6 +426,10 @@ public class MainActivity extends AppCompatActivity {
                     dataBundle.putStringArray("SONG_WHO", topFiveSongsWho);
                     dataBundle.putStringArray("SONG_IMAGES", topFiveSongImages);
                     dataBundle.putStringArray("SONG_SNIPPETS", topFiveSongsURL);
+
+                    Log.d("myMusicTaste", String.valueOf(myMusicTasteButForDB));
+                    databaseReference.push().setValue(myMusicTasteButForDB);
+
                 } catch (JSONException e) {
                     Log.d("JSON", "Failed to parse data: " + e);
                     Toast.makeText(MainActivity.this, "Failed to parse data, watch Logcat for more details",
@@ -429,10 +441,6 @@ public class MainActivity extends AppCompatActivity {
 //        Content content = new Content.Builder();
 ////                                .addText(".")
 ////                                .build();
-        Gson gson = new Gson();
-        String musicTasteNowString = gson.toJson(myMusicTaste);
-        Log.d("set my music taste", musicTasteNowString);
-//        editor.putString("MUSIC", musicTasteNowString);
 
 
     }

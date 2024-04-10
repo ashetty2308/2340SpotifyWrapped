@@ -17,7 +17,7 @@
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Settings"
+        android:title="Wrapped Past"
         android:icon = "@drawable/baseline_10k_24"
         android:id="@+id/Settings"/>
 </menu>
