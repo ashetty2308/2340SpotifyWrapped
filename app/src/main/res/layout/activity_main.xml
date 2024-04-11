@@ -45,14 +45,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="43dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:text="Request Token"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="#4CAF50" />
 
     <TextView
         android:id="@+id/code_text_view"
@@ -66,6 +65,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/token_btn"
+        app:rippleColor="#4CAF50"
         tools:text="Code:" />
 
     <Button
@@ -80,6 +80,7 @@
         android:text="Request Code"
         app:layout_constraintBottom_toTopOf="@+id/response_text_view"
         app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#4CAF50"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -103,6 +104,7 @@
         android:layout_marginTop="7dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        app:rippleColor="#4CAF50"
         android:text="Get User Profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,6 +119,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
+        app:rippleColor="#4CAF50"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.742" />
@@ -126,6 +129,7 @@
         android:layout_width="226dp"
         android:layout_height="wrap_content"
         android:text="Enter App"
+        app:rippleColor="#4CAF50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
